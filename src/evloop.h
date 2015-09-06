@@ -1,6 +1,7 @@
 #ifndef EVLOOP_H
 #define EVLOOP_H
 
-void main_loop();
+void *x_main_loop(void *arg);
+void redraw();
 
 #endif

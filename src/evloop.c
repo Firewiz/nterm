@@ -17,15 +17,29 @@ void redraw(void) {
   XDrawRectangle(xv.dis, xv.win, xv.gc, t_cx * 6, t_cy * 12 + 12, 6, 0);
 }
 
-void main_loop(void) {
+void *x_main_loop(void *arg) {
   XEvent evt;
   KeySym key;
   char typeahead[256];
+  int len;
   while(1) {
     XNextEvent(xv.dis, &evt);
     if(evt.type == ClientMessage) {
       break;
     } else if(evt.type == Expose && evt.xexpose.count == 0) {
+      redraw();
+    } else if(evt.type == KeyPress) {
+      len = XLookupString(&evt.xkey, typeahead, 256, &key, 0);
+      int i;
+      for(i = 0; i < len; i++) {
+	if(typeahead[i] == '\r') {
+	  typeahead[i] = '\n';
+	} else if(typeahead[i] < ' ') {
+	  typeahead[i] = 0;
+	}
+	add_tchar(typeahead[i]);
+      }
+      fwrite(typeahead, sizeof(char), len, prog);
       redraw();
     }
   }

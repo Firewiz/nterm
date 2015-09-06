@@ -4,7 +4,7 @@ PROG=nterm
 
 CFLAGS=-g
 LDFLAGS=
-LIBS=-lX11
+LIBS=-lX11 -lpthread
 
 $(PROG):$(OBJS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(PROG) $(LDFLAGS) $(LIBS)
