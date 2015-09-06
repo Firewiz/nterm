@@ -1,0 +1,2 @@
+nterm:
+	cd src ; make
