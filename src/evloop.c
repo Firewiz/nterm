@@ -34,8 +34,6 @@ void *x_main_loop(void *arg) {
       for(i = 0; i < len; i++) {
 	if(typeahead[i] == '\r') {
 	  typeahead[i] = '\n';
-	} else if(typeahead[i] < ' ') {
-	  typeahead[i] = 0;
 	}
 	add_tchar(typeahead[i]);
       }

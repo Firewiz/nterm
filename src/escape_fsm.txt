@@ -1,0 +1,72 @@
+State diagram for VT100 escape parsing:
+
+Initial state: read1
+
+State   Character   Action   Next State
+read1	c	    RIS	                 exit
+read1	D	    IND	              	 exit
+read1	E	    NEL	              	 exit
+read1	H	    HTS	              	 exit
+read1	M	    RI	              	 exit
+read1	Z	    DECID             	 exit
+read1	7	    DECSC             	 exit
+read1	8	    DECRC             	 exit
+read1	%	    Buffer            	 selcs
+selcs	@	    Select default CS 	 exit
+selcs	G	    Select UTF-8      	 exit
+selcs	8	    Select UTF-8      	 exit
+read1	#	    Buffer 	      	 rdecaln
+rdecaln 8	    DECALN	      	 exit
+read1	(	    Buffer	      	 defg0
+defg0	B	    Select default GM 	 exit
+defg0	0	    Select VT100 GM   	 exit
+defg0	U	    Select null GM    	 exit
+defg0	K	    Select user GM    	 exit
+read1	)	    Buffer 	      	 defg1
+defg1	B	    Select default GM 	 exit
+defg1	0	    Select VT100 GM   	 exit
+defg1	U	    Select null GM    	 exit
+defg1	K	    Select user GM    	 exit
+read1	>	    DECPNM 	      	 exit
+read1	=	    DECPAM	      	 exit
+read1	]	    Buffer	         osc
+osc	P	    Buffer	         osc_p
+osc_p	[0-9a-f]    Buffer 7, set colors exit
+osc	R	    Reset colors  	 exit
+read1	[	    Buffer		 csi
+csi	[	    Buffer		 csi_dropchar
+csi	[0-9]	    Add digit to arg	 csi
+csi	;	    Next arg  	 	 csi
+csi	@	    ICH	 		 exit
+csi	A	    CUU			 exit
+csi 	B	    CUD			 exit
+csi	C	    CUF			 exit
+csi	D	    CUB			 exit
+csi	E	    CNL			 exit
+csi	F	    CPL			 exit
+csi	G	    CHA			 exit
+csi	H	    CUP			 exit
+csi	J	    ED			 exit
+csi	K	    EL			 exit
+csi	L	    IL			 exit
+csi	M	    DL			 exit
+csi	P	    DCH			 exit
+csi	X	    ECH			 exit
+csi	a	    HPR			 exit
+csi	c	    DA			 exit
+csi	d	    VPA			 exit
+csi	e	    VPR			 exit
+csi	f	    HVP			 exit
+csi	g	    TBC			 exit
+csi	h	    SM			 exit
+csi	l	    RM			 exit
+csi	m	    SGR			 exit
+csi	n	    DSR			 exit
+csi	r	    DECSTBM		 exit
+csi	s	    save cursor		 exit
+csi	u	    restore cursor 	 exit
+csi	`	    HPA	   		 exit
+csi	?	    Buffer, set DPM      csi
+osc	[^^G]	    Buffer  		 osc
+osc	^G	    			 exit
+csi_dropchar any    Buffer		 exit
